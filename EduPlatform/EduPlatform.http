@@ -1,0 +1,67 @@
+@host = http://localhost:5089
+@teacherToken = 
+@studentToken = 
+
+### Регистрация студента
+POST {{host}}/api/Auth/register
+Content-Type: application/json
+
+{
+  "username": "student1",
+  "password": "1234"
+}
+
+### Вход преподавателя (логин создаётся при старте API)
+POST {{host}}/api/Auth/token
+Content-Type: application/json
+
+{
+  "login": "teacher",
+  "password": "teacher123"
+}
+
+### Вход студента
+POST {{host}}/api/Auth/token
+Content-Type: application/json
+
+{
+  "login": "ivan_ivanov",
+  "password": "password"
+}
+
+### Список курсов с фильтром и пагинацией
+GET {{host}}/api/Courses?search=&page=1&pageSize=10
+
+### Добавить курс (преподаватель)
+POST {{host}}/api/Courses/Add-course
+Authorization: Bearer {{teacherToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="NameOfCourse"
+
+C#
+--boundary
+Content-Disposition: form-data; name="Lessons"
+
+2
+--boundary
+Content-Disposition: form-data; name="Description"
+
+Основы языка
+--boundary--
+
+### Запись на курс (студент)
+POST {{host}}/api/Courses/1/enroll
+Authorization: Bearer {{studentToken}}
+
+### Создать задание
+POST {{host}}/api/courses/1/assignments
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "title": "Лабораторная 1",
+  "description": "Загрузите решение",
+  "maxGrade": 100
+}
